@@ -88,7 +88,8 @@
   #+ecl (si:gc t)
   #+openmcl (ccl:gc)
   #+corman (ccl:gc (if full 3 0))
-  #+lispworks (hcl:gc-generation (if full t 0)))
+  #+lispworks (hcl:gc-generation (if full t 0))
+  #+mezzano (sys.int::gc))
 
 ;;;; Weak Pointers
 
@@ -121,7 +122,8 @@
   #+lispworks
   (let ((array (make-array 1 :weak t)))
     (setf (svref array 0) object)
-    (%make-weak-pointer :pointer array)))
+    (%make-weak-pointer :pointer array))
+  #+mezzano (sys.int::make-weak-pointer object))
 
 #-(or allegro openmcl lispworks)
 (defun weak-pointer-p (object)
@@ -132,7 +134,8 @@
   #+clisp (ext:weak-pointer-p object)
   #+abcl (typep object 'ext:weak-reference)
   #+ecl (typep object 'ext:weak-pointer)
-  #+corman (ccl:weak-pointer-p object))
+  #+corman (ccl:weak-pointer-p object)
+  #+mezzano (sys.int::weak-pointer-p object))
 
 (defun weak-pointer-value (weak-pointer)
   "If @code{weak-pointer} is valid, returns its value. Otherwise,
@@ -145,7 +148,8 @@
   #+allegro (svref (weak-pointer-pointer weak-pointer) 0)
   #+openmcl (values (gethash weak-pointer *weak-pointers*))
   #+corman (ccl:weak-pointer-obj weak-pointer)
-  #+lispworks (svref (weak-pointer-pointer weak-pointer) 0))
+  #+lispworks (svref (weak-pointer-pointer weak-pointer) 0)
+  #+mezzano (sys.int::weak-pointer-value weak-pointer))
 
 ;;;; Weak Hash-tables
 
@@ -361,7 +365,8 @@
         (hcl:flag-special-free-action object))
       (setf (gethash object *finalizers*)
             (cons function finalizers)))
-    object))
+    object)
+  #+mezzano (error 'tivial-garbage-finalize-undefined))
 
 (defun cancel-finalization (object)
   "Cancels all of @code{object}'s finalizers, if any."
@@ -393,4 +398,5 @@
   #+lispworks
   (progn
     (remhash object *finalizers*)
-    (hcl:flag-not-special-free-action object)))
+    (hcl:flag-not-special-free-action object))
+  #+mezzano (error 'tivial-garbage-cancel-finalization-undefined))

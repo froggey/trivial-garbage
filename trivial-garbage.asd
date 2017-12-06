@@ -6,7 +6,7 @@
 ;;; <loliveira@common-lisp.net> and is provided with absolutely no
 ;;; warranty.
 
-#-(or cmu scl sbcl allegro clisp openmcl corman lispworks ecl abcl)
+#-(or cmu scl sbcl allegro clisp openmcl corman lispworks ecl abcl mezzano)
 (error "Sorry, your Lisp is not supported by trivial-garbage.")
 
 (defsystem trivial-garbage
@@ -23,6 +23,7 @@
   :depends-on (trivial-garbage rt)
   :components ((:file "tests")))
 
+#-mezzano
 (defmethod perform ((op test-op)
                     (sys (eql (find-system :trivial-garbage-tests))))
   (operate 'load-op :trivial-garbage-tests)
