@@ -89,7 +89,7 @@
   #+openmcl (ccl:gc)
   #+corman (ccl:gc (if full 3 0))
   #+lispworks (hcl:gc-generation (if full t 0))
-  #+mezzano (sys.int::gc))
+  #+mezzano (mezzano.extensions:gc))
 
 ;;;; Weak Pointers
 
@@ -123,7 +123,7 @@
   (let ((array (make-array 1 :weak t)))
     (setf (svref array 0) object)
     (%make-weak-pointer :pointer array))
-  #+mezzano (sys.int::make-weak-pointer object))
+  #+mezzano (mezzano.extensions:make-weak-pointer object))
 
 #-(or allegro openmcl lispworks)
 (defun weak-pointer-p (object)
@@ -135,7 +135,7 @@
   #+abcl (typep object 'ext:weak-reference)
   #+ecl (typep object 'ext:weak-pointer)
   #+corman (ccl:weak-pointer-p object)
-  #+mezzano (sys.int::weak-pointer-p object))
+  #+mezzano (mezzano.extensions:weak-pointer-p object))
 
 (defun weak-pointer-value (weak-pointer)
   "If @code{weak-pointer} is valid, returns its value. Otherwise,
@@ -149,7 +149,7 @@
   #+openmcl (values (gethash weak-pointer *weak-pointers*))
   #+corman (ccl:weak-pointer-obj weak-pointer)
   #+lispworks (svref (weak-pointer-pointer weak-pointer) 0)
-  #+mezzano (sys.int::weak-pointer-value weak-pointer))
+  #+mezzano (mezzano.extensions:weak-pointer-value weak-pointer))
 
 ;;;; Weak Hash-tables
 
